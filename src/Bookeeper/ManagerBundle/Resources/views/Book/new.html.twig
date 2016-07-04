@@ -1,3 +1,9 @@
-<p>Create New Book</p>
+{% extends '::base.html.twig' %}
 
-{{ form(form, {attr: {novalidate: 'novalidate'}}) }}
+{% block body -%}
+
+    <p>Create New Book</p>
+
+    {{ form(form, {attr: {novalidate: 'novalidate'}}) }}
+
+{% endblock %}
