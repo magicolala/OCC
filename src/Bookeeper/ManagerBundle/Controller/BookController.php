@@ -7,14 +7,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormBuilderInterface;
 use Bookeeper\ManagerBundle\Entity\Book;
 use Bookeeper\ManagerBundle\Form\BookType;
+use Doctrine\ORM\EntityManager;
 
 class BookController extends Controller {
 
     public function indexAction() {
-        return $this->render('BookeeperManagerBundle:Book:index.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $books = $em->getRepository('BookeeperManagerBundle:Book')->findAll();
+        return $this->render('BookeeperManagerBundle:Book:index.html.twig', array(
+            'books'=>$books
+        ));
     }
     public function showAction($id) {
-        return $this->render('BookeeperManagerBundle:Book:show.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('BookeeperManagerBundle:Book')->find($id);
+
+        return $this->render('BookeeperManagerBundle:Book:show.html.twig', array(
+            'book'=>$book
+        ));
     }
     public function newAction() {
         $book = new Book();
@@ -43,13 +53,13 @@ class BookController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager;
+            $em = $this->getDoctrine()->getManager();
             $em->persist($book);
             $em->flush();
 
             $this->get('session')->getFlashBag()->add('msg', 'Your book has been created!');
 
-            return $this->redirect($this->generateUrl('book_new'));
+            return $this->redirect($this->generateUrl('book_show', array('id'=>$book->getId())));
         }
 
         $this->get('session')->getFlashBag()->add('msg', 'Something went wrong!');
