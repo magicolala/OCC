@@ -69,9 +69,44 @@ class BookController extends Controller {
         ));
     }
     public function editAction($id) {
-        return $this->render('BookeeperManagerBundle:Book:edit.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('BookeeperManagerBundle:Book')->find($id);
+
+        $form = $this->createForm(new BookType(), $book, array(
+            'action'=>$this->generateUrl('book_update', array('id'=>$book->getId())),
+            'method'=> 'PUT'
+        ));
+
+        $form->add('submit', 'submit', array('label'=>'Update Book'));
+
+        return $this->render('BookeeperManagerBundle:Book:edit.html.twig', array(
+            'form'=>$form->createView()
+        ));
     }
     public function updateAction(Request $request, $id) {
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('BookeeperManagerBundle:Book')->find($id);
+
+        $form = $this->createForm(new BookType(), $book, array(
+            'action'=>$this->generateUrl('book_update', array('id'=>$book->getId())),
+            'method'=> 'PUT'
+        ));
+
+        $form->add('submit', 'submit', array('label'=>'Update Book'));
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('msg', 'Your book has been updated!');
+
+            return $this->redirect($this->generateUrl('book_show', array('id'=>$id)));
+        }
+
+        return $this->render('BookeeperManagerBundle:Book:edit.html.twig', array(
+            'form'=>$form->createView()
+        ));
 
     }
     public function deleteAction(Request $request, $id) {

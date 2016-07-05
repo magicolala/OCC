@@ -7,7 +7,8 @@
         {% for book in books %}
             <li>
                 {{ book.title }} -
-                <a href="{{ path('book_show', {'id': book.id}) }}">View Book</a>
+                <a href="{{ path('book_show', {'id': book.id}) }}">View Book</a> -
+                <a href="{{ path('book_edit', {'id': book.id}) }}">Edit Book</a>
             </li>
         {% endfor %}
     </ul>
